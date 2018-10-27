@@ -72,7 +72,9 @@ public int[] convertToIntervals(String[] chords){
   public boolean isKey(int[] intervals){
 
     //for(int z:intervals)
-    //  System.out.println(z);
+      //System.out.println(z);
+     //System.out.println("");
+
 
 
     for(int x: intervals){
@@ -104,6 +106,9 @@ public int[] convertToIntervals(String[] chords){
     int span = interval[0];
     int i = j - span;
 
+    if(i < 0)
+      i = 12 + i;
+
     return notes[i];
   }
 
@@ -113,6 +118,6 @@ public int[] convertToIntervals(String[] chords){
 
     Key test = new Key(new String[] {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"});
     //System.out.println(test.getInterval("D","G"));
-    System.out.println(test.possibleKeys(new String[]{"A","C#","F#","B"}));
+    System.out.println(test.possibleKeys(new String[]{"C","G","A","F"}));
   }
 }
