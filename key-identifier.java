@@ -17,9 +17,9 @@ private int[] correctIntervals = new int[]{0,2,4,5,7,9,11};
     int span = 0;
     for (int i = 0; i < notes.length; i++) {
       for (int j = 0; j < notes.length; j++){
-        if ((notes[i] == start && notes[j] == end) || (notes[i] == end && notes[j] == start) )
+        if (notes[i] == start && notes[j] == end)
         {
-          span = i - j;
+          span = j - i;
           break;
         }
       }
@@ -50,7 +50,7 @@ public int[] convertToIntervals(String[] chords){
   output[0] = 0;
 
   for(int i = 1; i < chords.length; i++)
-    output[1] = getInterval(root,chords[i]);
+    output[i] = getInterval(root,chords[i]);
 
   return output;
 }
@@ -108,7 +108,7 @@ public int[] convertToIntervals(String[] chords){
     String[] chords = new String[]{"F","C","G","A"};
 
     Key test = new Key(new String[] {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"});
-    System.out.println(test.getInterval("D","G"));
+    //System.out.println(test.getInterval("D","G"));
     System.out.println(test.possibleKeys(new String[]{"A","C#","F#","B"}));
   }
 }
