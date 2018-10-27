@@ -70,23 +70,27 @@ public int[] convertToIntervals(String[] chords){
 
 //IDENTIFY IF AN ARRAY OF INTERVALS ALL CONTAIN CORRECT INTERVALS FOR A MAJOR KEY
   public boolean isKey(int[] intervals){
-    boolean value = true;
 
-    for(int z:intervals)
-      System.out.println(z);
-    System.out.println("");
+    //for(int z:intervals)
+    //  System.out.println(z);
+
 
     for(int x: intervals){
+      boolean value = false;
+
       for(int y: correctIntervals){
-        if(x != y)
-          value = false;
+
+        if(x == y){
+          value = true;
+          break;
+        }
       }
-      if (value == false)
-          return false;
+      if(!value)
+       return false;
     }
-
+    //System.out.println("true");
+    //System.out.println("");
     return true;
-
   }
 
   public String whichKeyIsThis(int[] interval, String[] chords)
