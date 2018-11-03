@@ -1,9 +1,13 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Key{
 
-private String[] notes;
-private int[] correctIntervals = new int[]{0,2,4,5,7,9,11};
+  private String[] notes;
+  private String root;
+  private int[] correctIntervals = new int[]{0,2,4,5,7,9,11};
+  private HashMap<String, int[]> chordIntervals = new HashMap<String, int[]>();
 
   public Key(){
     notes = new String[12];
@@ -13,11 +17,82 @@ private int[] correctIntervals = new int[]{0,2,4,5,7,9,11};
     this.notes = notes;
   }
 
+  public void setchordIntervals(){
+    chordIntervals.put("M",    new int[]{0, 4, 7});
+    chordIntervals.put("m",    new int[]{0, 3, 7});
+    chordIntervals.put("sus2", new int[]{0, 2, 7});
+    chordIntervals.put("sus4", new int[]{0, 5, 7});
+    chordIntervals.put("maj7", new int[]{11});
+    chordIntervals.put("7",    new int[]{10});
+    chordIntervals.put("dim",  new int[]{0,3,6});
+
+  }
+  public void printArray(int[] arr, String title)
+  {  System.out.println(title);
+    for(int item : arr)
+        System.out.println(item);
+  }
+
+  public ArrayList<ArrayList<String>> arrangeChords(String[] input){
+    ArrayList<ArrayList<String>> notesAndChords = new ArrayList<ArrayList<String>>();
+
+    for(String chord: input)
+    {
+      ArrayList<String> item = new ArrayList<String>();
+      for(String key : chordIntervals.keySet())
+      {
+        if(chord.indexOf(key) > -1)
+        {
+          chord = chord.replace(key,"");
+          item.add(key);
+        }
+      }
+        item.add(0, chord);
+        notesAndChords.add(item);
+    }
+    return notesAndChords;
+  }
+
+
+  public int[] convertChordArraysToIntervals(ArrayList<ArrayList<String>> notesAndChords){
+    root = notesAndChords.get(0).get(0);
+    ArrayList<Integer> notes = new ArrayList<Integer>();
+    for(ArrayList<String> x: notesAndChords)
+    {
+      notes.add(getInterval(root, x.get(0)));
+      for(int i = 1; i < x.size(); i++){
+        notes.addAll(shiftIntervals(root, x.get(0), chordIntervals.get(x.get(i))));}
+    }
+    int[] output = integerToInt(notes);
+    return output;
+  }
+
+  public int[] integerToInt(ArrayList<Integer> integers) {
+    int[] ints = new int[integers.size()];
+    int i = 0;
+    for (Integer n : integers)
+        ints[i++] = n;
+    return ints;
+  }
+  public ArrayList<Integer> intToInteger(int[] ints) {
+    ArrayList<Integer> integers = new ArrayList<Integer>();
+    int i = 0;
+    for (int n : ints)
+      integers.add(Integer.valueOf(n));
+    return integers;
+  }
+
+  public ArrayList<Integer> shiftIntervals(String root, String chordroot, int[] intervals){
+    int difference = getInterval(root, chordroot);
+    int[] output = increaseByValue(intervals, difference);
+    return intToInteger(output);
+  }
+
   public int getInterval(String start, String end){
     int span = 0;
     for (int i = 0; i < notes.length; i++) {
       for (int j = 0; j < notes.length; j++){
-        if (notes[i] == start && notes[j] == end)
+        if (notes[i].equals(start) && notes[j].equals(end))
         {
           span = j - i;
           break;
@@ -26,7 +101,6 @@ private int[] correctIntervals = new int[]{0,2,4,5,7,9,11};
     }
     if(span < 0)
       span = 12 + span;
-
     return span;
   }
 
@@ -34,11 +108,11 @@ private int[] correctIntervals = new int[]{0,2,4,5,7,9,11};
 
     ArrayList<String> possibleKeys = new ArrayList<String>();
 
-    int[] intervals = convertToIntervals(chords);
+    int[] intervals = convertChordArraysToIntervals(arrangeChords(chords));
 
-    for(int i = 0; i < 11; i++){
+    for(int i = 0; i < 12; i++){
       if(isKey(intervals))
-        possibleKeys.add(whichKeyIsThis(intervals,chords));
+        possibleKeys.add(whichKeyIsThis(intervals, this.root));
       intervals = increaseByOne(intervals);
     }
     return possibleKeys;
@@ -54,6 +128,18 @@ public int[] convertToIntervals(String[] chords){
 
   return output;
 }
+
+  public int[] increaseByValue(int[] intervals, int value){
+    int[] output = intervals;
+    for(int i = 0; i < intervals.length; i++)
+    {
+      if(output[i] + value > 11)
+        output[i] = output[i] + value - 12;
+      else
+        output[i] = output[i] + value;
+    }
+      return output;
+  }
 
   public int[] increaseByOne(int[] intervals){
     int[] output = intervals;
@@ -71,17 +157,10 @@ public int[] convertToIntervals(String[] chords){
 //IDENTIFY IF AN ARRAY OF INTERVALS ALL CONTAIN CORRECT INTERVALS FOR A MAJOR KEY
   public boolean isKey(int[] intervals){
 
-    //for(int z:intervals)
-      //System.out.println(z);
-     //System.out.println("");
-
-
-
     for(int x: intervals){
       boolean value = false;
 
       for(int y: correctIntervals){
-
         if(x == y){
           value = true;
           break;
@@ -90,17 +169,16 @@ public int[] convertToIntervals(String[] chords){
       if(!value)
        return false;
     }
-    //System.out.println("true");
-    //System.out.println("");
     return true;
   }
 
-  public String whichKeyIsThis(int[] interval, String[] chords)
+  public String whichKeyIsThis(int[] interval, String root)
   {
     int j = 0;
     for (int k = 0; k < notes.length; k++) {
-      if(notes[k] == chords[0])
+      if(notes[k].equals(root))
         j = k;
+
     }
 
     int span = interval[0];
@@ -108,16 +186,14 @@ public int[] convertToIntervals(String[] chords){
 
     if(i < 0)
       i = 12 + i;
-
     return notes[i];
   }
 
   public static void main (String[] args){
 
-    String[] chords = new String[]{"F","C","G","A"};
-
     Key test = new Key(new String[] {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"});
-    //System.out.println(test.getInterval("D","G"));
-    System.out.println(test.possibleKeys(new String[]{"C","G","A","F"}));
+
+    test.setchordIntervals();
+    System.out.println(test.possibleKeys(new String[]{"CM","GM", "Am", "FM"}));
   }
 }
