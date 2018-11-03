@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Key{
 
@@ -115,6 +116,8 @@ public class Key{
         possibleKeys.add(whichKeyIsThis(intervals, this.root));
       intervals = increaseByOne(intervals);
     }
+    System.out.println("");
+    System.out.println("This sequence could be in the keys of...");
     return possibleKeys;
   }
 
@@ -195,6 +198,14 @@ public int[] convertToIntervals(String[] chords){
     Key test = new Key(new String[] {"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"});
 
     test.setchordIntervals();
-    System.out.println(test.possibleKeys(new String[]{"CM","GM", "Am", "FM"}));
+    //System.out.println(test.possibleKeys(new String[]{"CM","GM", "Am", "FM"}));
+    Scanner keyboard = new Scanner(System.in);
+    System.out.println("Enter your chords and/or notes:");
+    ArrayList<String> input = new ArrayList<String>();
+
+    while(keyboard.hasNextLine()){
+        input.add(keyboard.nextLine());
+    }
+    System.out.println(test.possibleKeys(input.toArray(new String[0])));
   }
 }
