@@ -138,6 +138,7 @@ public int[] convertToIntervals(String[] chords){
       else
         output[i] = output[i] + value;
     }
+      setchordIntervals();
       return output;
   }
 
